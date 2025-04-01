@@ -1,4 +1,4 @@
-import { Frame, Page } from '@nativescript/core';
+import { Application, Frame, Page } from '@nativescript/core';
 import {
   createApp,
   defineComponent,
@@ -7,6 +7,7 @@ import {
   nextTick,
   NSVElement,
   NSVRoot,
+  provide,
   render,
   unref,
 } from 'nativescript-vue';
@@ -16,13 +17,13 @@ import {
   Router,
 } from 'vue-router';
 import { getAppContext, getContextComponent } from './app-context';
-export function renderRoutePage(
-  route: RouteLocationResolved,
-  router: Router,
-  props: any = {},
-) {
-  const frame = resolveFrame(undefined);
+
+export function renderRoutePage(route: RouteLocationResolved, props: any = {}) {
+  /*  console.log('frameIdframeIdframeIdframeIdframeId', Application['frameId']);
+  const frame = Frame.getFrameById('frame_1'); //resolveFrame(undefined);
   if (!frame) {
+    console.log("'Frame not found'");
+
     throw new Error('Failed to resolve frame. Make sure your frame exists.');
   }
 
@@ -31,7 +32,7 @@ export function renderRoutePage(
   if (!componentRouter) return;
   const node = renderNode(componentRouter, props, {
     onHMR() {
-      node.unmount();
+       node.unmount();
       node.mount();
       nextTick(() => {
         frame.replacePage({
@@ -42,14 +43,66 @@ export function renderRoutePage(
           },
           create: () => node?.nativeView,
         });
-      });
+      }); 
     },
   });
   node.mount();
 
-  frame.navigate({
-    ...{},
-    create: () => node?.nativeView,
+  console.log('LLAMANDO A LA PAGINA', node.nativeView);
+
+  nextTick(() => {
+    frame.navigate({
+      ...{},
+      transition: {
+        name: 'fade',
+        duration: 10,
+      },
+      create: () => node?.nativeView,
+    });
+  }); */
+}
+
+export function renderRoutePage2(
+  frame: Frame,
+  componentRouter: any,
+  props: any = {},
+) {
+  if (!frame) {
+    console.log("'Frame not found'");
+
+    throw new Error('Failed to resolve frame. Make sure your frame exists.');
+  }
+
+  if (!componentRouter) return;
+  const node = renderNode(componentRouter, props, {
+    onHMR() {
+      /*   node.unmount();
+      node.mount();
+      nextTick(() => {
+        frame.replacePage({
+          ...{},
+          transition: {
+            name: 'fade',
+            duration: 10,
+          },
+          create: () => node?.nativeView,
+        });
+      }); */
+    },
+  });
+  node.mount();
+
+  console.log('renderRoute', node.nativeView);
+
+  nextTick(() => {
+    frame.navigate({
+      ...{},
+      transition: {
+        name: 'fade',
+        duration: 10,
+      },
+      create: () => node?.nativeView,
+    });
   });
 }
 
@@ -65,6 +118,7 @@ export function renderNode(
       let mounted = false;
       return () => {
         const targetComponent = h(componentRouter, props);
+        targetComponent.appContext = getAppContext();
         if (mounted && hooks?.onHMR) {
           hooks?.onHMR();
         }

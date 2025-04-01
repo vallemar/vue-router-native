@@ -29,31 +29,38 @@ const items = ref(
     .map((_, index) => `Item ${index + 1}`),
 );
 const router = useRouter();
+function navigate() {
+  console.log('[ROUTER] current path:', router.currentRoute.value.fullPath);
+  router.push({
+    path: '/base/depth2',
+    state: {
+      from: 'home',
+      onUpdate(data) {
+        console.log('[ROUTER] onUpdate', data);
+      },
+    },
+  });
+}
 </script>
 
 <template>
   <Page actionBarHidden="true">
-    <GridLayout rows="auto, *">
-      <Label
+    <StackLayout rows="auto, *" class="bg-gray-100">
+      <!--  <Label
         :text="counter + ' - BACK TO HOME'"
         @tap="router.back()"
         class="text-center px-4 py-10 text-2xl text-gray-900 font-bold"
+      /> -->
+      <Label
+        text="Details"
+        class="text-center px-4 py-10 text-gray-900 font-bold"
       />
-
-      <ContentView row="1" class="bg-blue-600 rounded-t-3xl">
-        <ListView
-          :items="items"
-          separatorColor="transparent"
-          class="bg-transparent"
-        >
-          <template #default="{ item }">
-            <GridLayout columns="*, auto" class="px-4">
-              <Label :text="item + 'test'" class="text-3xl py-3 text-white" />
-              <ContentView col="1" class="w-5 h-5 rounded-full bg-white" />
-            </GridLayout>
-          </template>
-        </ListView>
-      </ContentView>
-    </GridLayout>
+      <Label
+        :text="'Go Depth2 ' + ' - ' + counter"
+        textWrap="true"
+        @tap="navigate"
+        class="text-center px-4 py-2 text-2xl text-gray-900 font-bold"
+      />
+    </StackLayout>
   </Page>
 </template>

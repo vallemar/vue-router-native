@@ -26,8 +26,7 @@ export function createNativeScriptHistory(): RouterHistory & {
   }
   function setLocation(location: any, data: any) {
     const route = router.resolve(location);
-    if (data?.vueRouterInternalPush !== true)
-      renderRoutePage(route, router, data);
+    //  if (data?.vueRouterInternalPush !== true) renderRoutePage(route, data);
     notify(route.fullPath);
     return route;
   }
@@ -42,19 +41,19 @@ export function createNativeScriptHistory(): RouterHistory & {
     base: base,
     createHref: createHref.bind(null, base),
     push(to: string, data?: HistoryState) {
-      console.log('push', to);
+      console.log('NativeScriptHistory push', to);
       const route = setLocation(to, data);
       stack.push(route.fullPath);
     },
 
     replace(to: string, data?: HistoryState) {
-      console.log('replace', to, data);
+      console.log('NativeScriptHistory replace', to, data);
       const route = setLocation(to, data);
       stack[stack.length - 1] = route.fullPath;
     },
 
     go(delta: number) {
-      console.log('go', delta);
+      console.log('NativeScriptHistory go', delta);
 
       if (delta < 0 && Frame.topmost().canGoBack()) {
         Frame.topmost().goBack();
@@ -76,7 +75,7 @@ export function createNativeScriptHistory(): RouterHistory & {
 }
 function ensureRouterReady(router: Router, initialPatch = '/') {
   Application.on('launch', () => {
-    router.push({ path: initialPatch, state: { vueRouterInternalPush: true } });
+    router.push({ path: '/base', state: { vueRouterInternalPush: true } });
   });
 }
 
